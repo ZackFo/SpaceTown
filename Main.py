@@ -6,6 +6,7 @@ from pygame.locals import (
     K_RIGHT,
     K_LEFT,
     K_ESCAPE,
+    K_SPACE,
     KEYDOWN,
     QUIT,
 )
@@ -16,6 +17,7 @@ class Player(pygame.sprite.Sprite):
         self.surf = pygame.Surface((50,50))
         self.surf.fill((100,100,250))
         self.rect = self.surf.get_rect()
+        #Player Controls
     def update(self, pressed_keys):
         if pressed_keys[K_RIGHT]:
             self.rect.move_ip(8, 0)
@@ -23,7 +25,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.move_ip(-8, 0)
         if pressed_keys[K_DOWN]:
             self.rect.move_ip(0, 15)
-
+        #Collision with walls
         if self.rect.left < 0:
             self.rect.left = 0
         if self.rect.right > 1000:
@@ -32,7 +34,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.top = 0
         if self.rect.bottom >= 700:
             self.rect.bottom = 700
-
+#Enemy sprite
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super(Enemy, self).__init__()
@@ -44,7 +46,7 @@ class Enemy(pygame.sprite.Sprite):
                 random.randint(300, 300),
             )
         )
-
+    #Enemy Movement
     def update(self):
         self.rect.move_ip(-2, 0)
         if self.rect.left < 0:
@@ -56,7 +58,17 @@ class Enemy(pygame.sprite.Sprite):
             self.rect.right = 1000
             self.rect.move_ip(0, 2)
         if self.rect.bottom >= 400:
-            self.rect.bottom = 400
+            self.rect.move_ip(-4, 0)
+            #loop basically.
+        if self.rect.left < 0:
+            self.rect.left = 0
+            self.rect.move_ip(0, 2)
+        if self.rect.bottom >= 450:
+            self.rect.move_ip(4, 0)
+        if self.rect.right > 1000:
+            self.rect.right = 1000
+            self.rect.move_ip(0, 2)
+        if self.rect.bottom >= 500:
             self.rect.move_ip(-4, 0)
                 
                 
@@ -64,7 +76,7 @@ class Enemy(pygame.sprite.Sprite):
 
 
 pygame.init()
-
+#Screen size
 screen = pygame.display.set_mode([1000,750])
 
 ADDENEMY = pygame.USEREVENT + 1
@@ -75,7 +87,7 @@ player = Player()
 enemies = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
-enemyCount = 0
+
 clock = pygame.time.Clock()
 
 running = True
@@ -88,7 +100,7 @@ while running:
 
         elif event.type == QUIT:
             running = False
-
+        #Spawns Infinetely.
         elif event.type == ADDENEMY:
             new_enemy = Enemy()
             enemies.add(new_enemy)
@@ -101,12 +113,12 @@ while running:
     player.update(pressed_keys)
 
     enemies.update()
-
+    #Screen color
     screen.fill((0, 0, 0))
 
     for entity in all_sprites:
         screen.blit(entity.surf, entity.rect)
-
+    #Collision with enenmies
     if pygame.sprite.spritecollideany(player,enemies):
         player.kill()
         running = False
