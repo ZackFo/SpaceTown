@@ -7,6 +7,8 @@ class Game:
 
     def run(self):
         self.player.update()
+
+        self.player.sprite.lasers.draw(screen)
         self.player.draw(screen)
         #update and draw all sprite groups
 if __name__ == "__main__":
@@ -28,4 +30,3 @@ if __name__ == "__main__":
 
         pygame.display.flip()
         clock.tick(60)
-        #15:10 on video
