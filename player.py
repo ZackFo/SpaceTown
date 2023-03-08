@@ -14,7 +14,7 @@ class Player(pygame.sprite.Sprite):
         self.laser_cooldown = 800
 
         self.lasers = pygame.sprite.Group()
-        self.laser_sound = pygame.mixer.Sound("audio_laser.wav")
+        self.laser_sound = pygame.mixer.Sound("SwordPullOut.wav")
         self.laser_sound.set_volume(0.4)
 
     def get_input(self):
