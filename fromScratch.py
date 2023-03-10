@@ -9,20 +9,22 @@ class Game:
         player_sprite = Player((screen_width / 2, screen_height), screen_width,5)
         self.player = pygame.sprite.GroupSingle(player_sprite)
 
-        #health adn score
+        #health and score
         self.lives = 3
         self.live_surf = pygame.image.load("SmallFin.gif").convert_alpha()
         self.live_x_start_pos = screen_width - (self.live_surf.get_size()[0] * 2 + 20)
         self.score = 0
         self.font = pygame.font.Font("Symtext.ttf",20)
 
+    #Obstacle stuff
         self.shape = obstacle.shape
         self.block_size = 6
         self.blocks = pygame.sprite.Group()
         self.obstacle_amount = 4
         self.obstacle_x_positions = [num * (screen_width / self.obstacle_amount) for num in range(self.obstacle_amount)]
         self.create_multiple_obstacles(*self.obstacle_x_positions, x_start= screen_width / 15, y_start = 460)
-
+    
+    #Alien stuff
         self.aliens = pygame.sprite.Group()
         self.alien_lasers = pygame.sprite.Group()
         self.alien_setup(rows = 6, cols = 8)
@@ -36,11 +38,13 @@ class Game:
         #music.set_volume(0.1)
         #music.play(loops = -1)
         self.laser_sound = pygame.mixer.Sound("audio_laser.wav")
-        self.laser_sound.set_volume(0.4)
+        self.laser_sound.set_volume(0.1)
         self.explosion_sound = pygame.mixer.Sound("audio_explosion.wav")
         self.explosion_sound.set_volume(0.3)
-        
-
+        self.glitter_sound = pygame.mixer.Sound("FairyGlitter.wav")
+        self.glitter_sound.set_volume(0.4)
+               
+    #Obstacle stuff
     def create_obstacle(self, x_start, y_start, offset_x):
         for row_index, row in enumerate(self.shape):
             for col_index, col in enumerate(row):
@@ -53,7 +57,7 @@ class Game:
     def create_multiple_obstacles(self, *offset, x_start, y_start,):
         for offset_x in offset:
             self.create_obstacle(x_start, y_start, offset_x)
-
+    #Alien stuff
     def alien_setup(self, rows, cols, x_distance = 60, y_distance = 48, x_offset = 70, y_offset = 100):
         for row_index, row in enumerate(range(rows)):
             for col_index, col in enumerate(range(cols)):
@@ -73,7 +77,7 @@ class Game:
                 self.alien_move_down(1)
             elif alien.rect.left <= 0:
                 self.alien_direction = 1
-                self.alien_move_down(1)
+                self.alien_move_down(2)
 
     def alien_move_down(self, distance):
         if self.aliens:
@@ -83,10 +87,10 @@ class Game:
     def alien_shoot(self):
         if self.aliens.sprites():
             random_alien = choice(self.aliens.sprites())
-            laser_sprite = Laser(random_alien.rect.center,6,screen_height)
+            laser_sprite = Laser(random_alien.rect.center,7,screen_height)
             self.alien_lasers.add(laser_sprite)
-            #self.laser_sound.play()
-
+            self.laser_sound.play()
+    #Alien that flies at thje top of the screen
     def extra_alien_timer(self):
         self.extra_spawn_time -= 1
         if self.extra_spawn_time <= 0:
@@ -110,6 +114,7 @@ class Game:
                 if pygame.sprite.spritecollide(laser,self.extra,True):
                     self.score += 500
                     laser.kill()
+                    self.glitter_sound.play()
 
         #alien Lasers
         if self.alien_lasers:
@@ -145,7 +150,7 @@ class Game:
 
     def victory_message(self):
         if not self.aliens.sprites():
-            victory_surf = self.font.render("Suck On Deez Nuts", False,(255,255,255))
+            victory_surf = self.font.render("You Win!", False,(255,255,255))
             victory_rect = victory_surf.get_rect(center = (screen_width / 2, screen_height / 2))
             screen.blit(victory_surf,victory_rect)
 
