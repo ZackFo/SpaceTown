@@ -4,7 +4,7 @@ from laser import Laser
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos,constraint,speed):
         super().__init__()
-        self.image = pygame.image.load("PlayerFinnn.png").convert_alpha()
+        self.image = pygame.image.load("SwordFinn.png").convert_alpha()
         #self.image.fill((100,100,250))
         self.rect = self.image.get_rect(midbottom = pos)
         self.speed = speed
@@ -15,7 +15,7 @@ class Player(pygame.sprite.Sprite):
 
         self.lasers = pygame.sprite.Group()
         self.laser_sound = pygame.mixer.Sound("SwordPullOut.wav")
-        self.laser_sound.set_volume(0.4)
+        self.laser_sound.set_volume(0.6)
 
     def get_input(self):
         keys = pygame.key.get_pressed()
@@ -31,6 +31,7 @@ class Player(pygame.sprite.Sprite):
             self.laser_time = pygame.time.get_ticks()
             self.laser_sound.play()
 
+    #Laser stuff
     def recharge(self):
         if not self.ready:
             current_time = pygame.time.get_ticks()
